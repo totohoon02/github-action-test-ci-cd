@@ -60,7 +60,7 @@ jobs:
         run: |
           aws s3 sync \
           --region ap-northeast-2 \
-          build s3://spring-githubaction-bucket/$GITHUB_SHA.zip \
+          build s3://spring-githubaction-bucket/mb.zip \
 
       - name: Deploy to EC2 From S3
         run:
@@ -68,4 +68,4 @@ jobs:
           --application-name github-action
           --deployment-config-name CodeDeployDefault.OneAtATime
           --deployment-group-name my-codedeploy-group
-          --s3-location bucket=spring-githubaction-bucket,bundleType=zip,key=$GITHUB_SHA.zip
+          --s3-location bucket=spring-githubaction-bucket,bundleType=zip,key=mb.zip
