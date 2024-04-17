@@ -46,7 +46,7 @@ jobs:
         run: ./gradlew clean build -x test
 
       - name: Make Zip file
-        run: zip -r ./$GITHUB_SHA.zip .
+        run: zip -r ./mb.zip .
         shell: bash
 
       - name: Set AWS Credentials
@@ -57,10 +57,8 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: Upload to S3
-        run: |
-          aws s3 sync \
-          --region ap-northeast-2 \
-          build s3://spring-githubaction-bucket/mb.zip \
+        run: aws s3 cp --region ap-northeast-2 ./mb.zip s3://spring-githubaction-bucket
+
 
       - name: Deploy to EC2 From S3
         run:
