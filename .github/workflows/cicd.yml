@@ -51,7 +51,10 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_EC2_METADATA_DISABLED: true
         run: |
-          aws --version
+          aws s3 sync \
+          --region ap-northeast-2 \
+          build s3://spring-githubaction-bucket \
+          --delete
   # 추가할 작업들
   # 빌드 후 .jar를 S3로 전달
   # Code Deploy에 배포 요청
