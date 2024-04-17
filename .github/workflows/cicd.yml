@@ -51,7 +51,7 @@ jobs:
           run: ./gradlew clean build -x test
 
         - name: Make Zip file
-          run: zip -r ./{{ env.BUILD_NAME }}.zip .
+          run: zip -r ./${{ env.BUILD_NAME }}.zip .
           shell: bash
 
         - name: Set AWS Credentials
@@ -62,13 +62,13 @@ jobs:
             aws-region: ap-northeast-2
 
         - name: Upload to S3
-          run: aws s3 cp --region ap-northeast-2 ./{{ env.BUILD_NAME }}.zip s3://{{ env.S3_BUCKET_NAME }}
+          run: aws s3 cp --region ap-northeast-2 ./${{ env.BUILD_NAME }}.zip s3://${{ env.S3_BUCKET_NAME }}
 
 
         - name: Deploy to EC2 From S3
           run:
             aws deploy create-deployment
-            --application-name {{ env.APPLICATION_NAME }}
+            --application-name ${{ env.APPLICATION_NAME }}
             --deployment-config-name CodeDeployDefault.OneAtATime
-            --deployment-group-name {{ env.DEPLOY_GROUP_NAME }}
-            --s3-location bucket={{ env.S3_BUCKET_NAME }},bundleType=zip,key={{ env.BUILD_NAME }}.zip
+            --deployment-group-name ${{ env.DEPLOY_GROUP_NAME }}
+            --s3-location bucket=${{ env.S3_BUCKET_NAME }},bundleType=zip,key=${{ env.BUILD_NAME }}.zip
