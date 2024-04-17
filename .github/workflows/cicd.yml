@@ -52,15 +52,15 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
-      - name: Upload to S3
-        run: |
-          aws s3 sync \
-          --region ap-northeast-2 \
-          build s3://spring-githubaction-bucket \
-          --delete 
+#      - name: Upload to S3
+#        run: |
+#          aws s3 sync \
+#          --region ap-northeast-2 \
+#          build s3://spring-githubaction-bucket \
+#          --delete
 
       - name: Deploy to EC2 From S3
-        run: |
+        run:
           aws deploy create-deployment
           --application-name githubaction-test-ci-cd
           --deployment-config-name CodeDeployDefault.OneAtATime
