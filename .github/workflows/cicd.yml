@@ -65,4 +65,4 @@ jobs:
           --application-name githubaction-test-ci-cd
           --deployment-config-name CodeDeployDefault.OneAtATime
           --deployment-group-name my-codedeploy-group
-          --s3-location spring-githubaction-bucket,bundleType=jar,key=libs/github-action-test-ci-cd-0.0.1-SNAPSHOT.jar
+          --s3-location bucket=spring-githubaction-bucket,bundleType=jar,key=libs/github-action-test-ci-cd-0.0.1-SNAPSHOT.jar
