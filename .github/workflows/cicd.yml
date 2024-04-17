@@ -44,3 +44,29 @@ jobs:
 
       - name: Build project
         run: ./gradlew clean build
+
+      - name: AWS
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_EC2_METADATA_DISABLED: true
+        run: |
+          aws --version
+  # 추가할 작업들
+  # 빌드 후 .jar를 S3로 전달
+  # Code Deploy에 배포 요청
+  # Deploy는 S3에 .jar 요청
+  # 실행
+#  deploy:
+#    needs: build
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#
+#      - name: Set up JDK 17
+#        uses: actions/setup-java@v2
+#        with:
+#          java-version: '17'
+#          distribution: 'zulu'
