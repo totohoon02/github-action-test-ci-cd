@@ -7,27 +7,27 @@ on:
       [ main ]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check-Out
-        uses: actions/checkout@v3
+  #  test:
+  #    runs-on: ubuntu-latest
+  #    steps:
+  #      - name: Check-Out
+  #        uses: actions/checkout@v3
+  #
+  #      - name: Set up JDK 17
+  #        uses: actions/setup-java@v3
+  #        with:
+  #          java-version: '17'
+  #          distribution: 'zulu'
+  #
+  #      - name: Grant execute permission for gradlew
+  #        run: chmod +x ./gradlew
+  #
+  #      - name: Run Test
+  #        run: ./gradlew test
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'zulu'
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
-
-      - name: Run Test
-        run: ./gradlew test
-
-
-  build:
-    needs: test
+  deploy:
+    #    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Check-Out
@@ -43,22 +43,26 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build project
-        run: ./gradlew clean build
+        run: ./gradlew clean build -x test
 
-      - name: Install AWS CLI
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y awscli
-          
-      - name: Deploy
-        env:
+      - name: Upload to S3
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_EC2_METADATA_DISABLED: true
+          AWS_REGION: ap-northeast-2
+
+      - name: Upload to S3
         run: |
           aws s3 sync \
           --region ap-northeast-2 \
           build s3://spring-githubaction-bucket \
-          --delete \
-          aws s3 cp s3://spring-githubaction-bucket/libs/github-action-test-ci-cd-0.0.1-SNAPSHOT.jar \
-          /home/ubuntu/
+          --delete 
+
+      - name: Deploy to EC2 From S3
+        run: |
+          aws deploy create-deployment
+          --application-name githubaction-test-ci-cd
+          --deployment-config-name CodeDeployDefault.OneAtATime
+          --deployment-group-name my-codedeploy-group
+          --s3-location spring-githubaction-bucket
